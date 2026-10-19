@@ -2,25 +2,24 @@
 
 See what the Claude Code settings, MCP configs and agent instruction files in a
 project allow, and what to change. The review looks at permission rules, MCP
-servers, and credentials written into agent files, at project and user level.
+servers, and credentials written into agent files, in the project Claude Code has open.
 It runs on your machine, makes no network requests, writes nothing, and never
 prints a credential's value.
 
 ## Where the review runs
 
-Run the review in Claude Code, including the terminal, IDE integration, or the desktop Code tab, with the project folder open. Adding this plugin to your Claude account makes it available to synced Claude Code sessions. A chat in Claude.ai cannot inspect the configuration files on your computer. In chat, use it to discuss a report you already ran; do not upload configuration files or credentials. Cowork access depends on the folders granted to that task and is not the same as your Claude Code environment.
+Run the review in Claude Code, including the terminal, IDE integration, or the desktop Code tab, with the project folder open. A chat in Claude.ai cannot inspect the configuration files on your computer. In chat, use it to discuss a report you already ran; do not upload configuration files or credentials. Cowork access depends on the folders granted to that task and is not the same as your Claude Code environment.
 
 ## Install
 
-In Claude Code 2.1.224 or later, run these two commands in a session:
+In a current version of Claude Code, run these two commands in a session:
 
 ```text
-/plugin marketplace add https://releases.deepsweep.ai/releases/claude-code/marketplace.json
+/plugin marketplace add deepsweep-ai/deepsweep-claude-plugin
 /plugin install deepsweep@deepsweep
 ```
 
-The plugin downloads once, checked against a published SHA-256, and needs Node.js 18 or later
-on `PATH`. To turn it off, run `/plugin disable deepsweep@deepsweep`; to remove it, run
+The plugin needs Node.js 20 or later on `PATH`. Its declared local MCP server runs the review in the project Claude Code has open. No additional workspace setup is required. To turn it off, run `/plugin disable deepsweep@deepsweep`; to remove it, run
 `/plugin uninstall deepsweep@deepsweep`. Fixes Claude made with your approval stay in your files
 after you remove the plugin.
 
@@ -39,7 +38,7 @@ Claude offers to make a fix and changes nothing until you say yes.
 Example, on a deliberately risky test project:
 
 ```text
-DeepSweep agent access review: risky (this project and your user-level Claude Code files)
+DeepSweep agent access review: risky (this project only)
 11 findings: 2 critical, 5 high, 4 medium
 
 1. CRITICAL  .mcp.json:7
@@ -61,8 +60,7 @@ DeepSweep agent access review: risky (this project and your user-level Claude Co
   publish, deploy, destroy), `additionalDirectories` that reach your home folder
   or the whole disk, `enableAllProjectMcpServers`, and PreToolUse hooks that
   answer "allow".
-- **MCP servers** (`.mcp.json`, your user-level and this project's local-scope
-  servers in `~/.claude.json`, and the Cursor and VS Code project configs):
+- **MCP servers** (`.mcp.json`, the Cursor and VS Code project configs):
   packages and images not pinned to a version, remote servers with no sign-in
   configured, and filesystem servers given your home folder or the whole disk.
 - **Credentials written in files**: known token formats, private keys and
@@ -82,10 +80,15 @@ it is not a safety certification.
 It does not look anything up online, so it cannot say whether a package is
 known to be malicious; it says whether it is pinned.
 
+## Review scope
+
+The local server reads only the fixed project paths below. It does not inspect your home-folder settings, follow links outside the project, accept arbitrary paths or commands, or edit files. Unreadable, oversized, and invalid configuration files are reported as coverage gaps. It is a local read-only tool, not an operating-system sandbox: do not run it against files a hostile process is changing concurrently.
+
+The server reports what files configure, not effective access or a security certification. Claude chat cannot run this local server; use the Claude Code terminal, IDE integration, or desktop Code tab.
+
 ## Privacy
 
-- **Network**: none. The plugin's code imports no network module; a test
-  fails the build if one ever does.
+- **Network**: none. The review makes no network calls. The MCP connection is local standard input/output; the final package is checked for outbound network APIs.
 - **Writes**: none. The review only reads the files listed below.
 - **Credential values**: read only to recognise their kind, then dropped. The
   report and the JSON output hold the file, line, key name and kind (for
@@ -116,17 +119,14 @@ does not exist is only checked for; it is not created.
 - `CLAUDE.local.md`
 - `CLAUDE.md`
 
-**In your home folder** (3 paths; skipped with `--no-user`; with `CLAUDE_CONFIG_DIR` set, Claude Code's own three files are read from that folder instead):
+**In your home folder**: none. This review is project-only.
 
-- `~/.claude.json`
-- `~/.claude/CLAUDE.md`
-- `~/.claude/settings.json`
 
 <!-- reads:end -->
 
 ## Requirements
 
-Node.js 18 or later on `PATH` (`node`). The plugin installs no packages. If Node is missing or older than 18, the review says so and reviews nothing.
+Node.js 20 or later on `PATH` (`node`). The plugin ships its dependencies and installs no packages. If the local MCP server cannot start or the host does not provide a project directory, no review runs. Check `/mcp` in Claude Code and restart after installing Node.
 
 ## Help
 
@@ -137,6 +137,10 @@ configuration files; the file name, line and finding text are enough.
 
 The DeepSweep editor extension shows these agent-access findings as you change
 the files: https://deepsweep.ai/install
+
+## Bundled dependencies
+
+The local MCP server includes the official Model Context Protocol SDK and its pinned dependencies. Their notices are included in `THIRD-PARTY-NOTICES.md`. No dependency is downloaded when the server runs.
 
 ## Licence
 

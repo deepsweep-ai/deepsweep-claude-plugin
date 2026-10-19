@@ -1,0 +1,7 @@
+{
+  "deepsweep": {
+    "type": "stdio",
+    "command": "node",
+    "args": ["--disallow-code-generation-from-strings", "${CLAUDE_PLUGIN_ROOT}/mcp/server.mjs"]
+  }
+}

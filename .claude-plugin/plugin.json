@@ -1,8 +1,8 @@
 {
   "name": "deepsweep",
   "displayName": "DeepSweep",
-  "version": "0.2.3",
-  "description": "Reviews what the Claude Code settings, MCP configs and agent instruction files in a project allow: permission rules, MCP servers, and credentials written into agent files. Runs on your machine; nothing is uploaded or written.",
+  "version": "0.3.0",
+  "description": "Review project agent permissions, MCP configurations and credentials written into agent files. Reads locally without changing files. Results appear in your Claude conversation.",
   "author": {
     "name": "DeepSweep",
     "url": "https://deepsweep.ai"

@@ -1,36 +1,15 @@
 ---
 name: agent-access
-description: Use when the user asks whether their Claude Code or AI coding agent setup is safe, what an agent is allowed to do without asking, whether an MCP server is risky or unpinned, whether permissions or allow rules are too broad, or whether a key or token is exposed in CLAUDE.md, AGENTS.md, .mcp.json or settings.json. Runs DeepSweep's local review and answers from its findings.
+description: Use when the user asks whether their Claude Code or AI coding agent setup is safe, what an agent is allowed to do without asking, whether an MCP server is risky or unpinned, whether permissions or allow rules are too broad, or whether a key or token is exposed in CLAUDE.md, AGENTS.md, .mcp.json or settings.json. Reads locally without changing files. Results appear in your Claude conversation.
 user-invocable: false
-allowed-tools: Bash(sh ${CLAUDE_PLUGIN_ROOT}/scripts/review.sh:*), Bash(sh "${CLAUDE_PLUGIN_ROOT}/scripts/review.sh":*)
+
+allowed-tools: mcp__plugin_deepsweep_deepsweep__review_agent_configuration
 ---
 
-# Agent access, from DeepSweep's local review
+# DeepSweep project configuration review
 
-The review below ran on this machine. It read the Claude Code settings, MCP
-configs and agent instruction files listed in the plugin README, at project and
-user level, and sent nothing anywhere. It never prints credential values.
+Call `mcp__plugin_deepsweep_deepsweep__review_agent_configuration` to review the project Claude Code has open. Set `all` to true for the complete list. The tool reviews project files only; it does not inspect user-level settings.
 
-```!
-sh "${CLAUDE_PLUGIN_ROOT}/scripts/review.sh" --all
-```
+If the tool is unavailable or returns an error, say no review ran. Do not run shell commands, inspect files yourself as a substitute, or invent findings. Claude chat cannot run this local server.
 
-## How to answer
-
-- If no actual DeepSweep report was produced, do not claim a review ran or invent findings. Explain that reviewing local configuration requires Claude Code with the project open; in chat, discuss only a report the user provides, never ask them to upload credentials or whole configuration files.
-
-- If the output starts with `DeepSweep review NOT RUN`, show it to the user as written: nothing was
-  reviewed. Do not present findings or a summary of your own.
-- Answer the user's actual question from the findings above. Cite each one by
-  its file:line and give its fix as written. If the review has no finding
-  about what they asked, say that, and say what the review covers.
-- Each finding is what a file configures. Do not tell the user what Claude
-  Code will actually do: the review does not see managed policy, other
-  settings, the session's permission mode or the version, and says so.
-- For a credential written in a file, the advice is always: move it to an
-  environment variable or secret store, then rotate it.
-- Offer to make a fix; do not edit any file until the user agrees, and show
-  the exact change first.
-- For a JSON copy of the result, run
-  `sh "${CLAUDE_PLUGIN_ROOT}/scripts/review.sh" --format json` with the Bash
-  tool.
+Present the returned report faithfully, including unreadable or oversized files and the configured-access limitation. Cite file:line and the supplied fix. Never include credential values. Offer to make a fix only with the user's agreement and show the exact change first. Removing a written credential does not revoke it; recommend rotation.
