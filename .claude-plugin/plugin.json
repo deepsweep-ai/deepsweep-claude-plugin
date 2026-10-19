@@ -1,0 +1,23 @@
+{
+  "name": "deepsweep",
+  "displayName": "DeepSweep",
+  "version": "0.2.2",
+  "description": "Reviews what the Claude Code settings, MCP configs and agent instruction files in a project allow: permission rules, MCP servers, and credentials written into agent files. Runs on your machine; nothing is uploaded or written.",
+  "author": {
+    "name": "DeepSweep",
+    "url": "https://deepsweep.ai"
+  },
+  "homepage": "https://deepsweep.ai",
+  "keywords": [
+    "security",
+    "permissions",
+    "mcp",
+    "agents",
+    "review"
+  ],
+  "license": "LicenseRef-DeepSweep-Proprietary",
+  "repository": "https://github.com/deepsweep-ai/deepsweep-claude-plugin",
+  "icon": "./icon.svg",
+  "documentationUrl": "https://deepsweep.ai/install#claude-code",
+  "supportUrl": "https://deepsweep.ai/support"
+}

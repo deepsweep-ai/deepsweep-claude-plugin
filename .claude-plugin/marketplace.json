@@ -1,0 +1,16 @@
+{
+  "name": "deepsweep",
+  "owner": {
+    "name": "DeepSweep"
+  },
+  "metadata": {
+    "description": "DeepSweep plugins for Claude Code."
+  },
+  "plugins": [
+    {
+      "name": "deepsweep",
+      "source": "./",
+      "description": "Reviews what the Claude Code configuration in a project allows. Runs locally."
+    }
+  ]
+}

@@ -1,0 +1,60 @@
+DeepSweep — Proprietary Software Licence (Claude Code plugin)
+Copyright (c) 2026 DeepSweep AI. All rights reserved.
+
+This plugin and its source code are proprietary. The source is shipped in
+readable form only because the host application runs it as source; being able
+to read it grants no right to reuse it. No open-source licence is granted.
+
+1. GRANT OF USE
+
+   You are granted a personal, non-exclusive, non-transferable, revocable
+   licence to install and use this plugin, obtained from an official DeepSweep
+   distribution channel (a DeepSweep-published plugin marketplace or directory
+   listing), inside the host application for its intended purpose, subject to
+   the terms of your subscription where one applies.
+
+   This grant exists so that people who install DeepSweep may lawfully run it.
+   It grants nothing beyond running it.
+
+2. RESTRICTIONS
+
+   Except where this restriction is unenforceable under applicable law, you
+   may not:
+
+   (a) copy, redistribute, sublicense, sell, rent, lease or host the plugin or
+       any part of it (including the review engine and rule files it contains),
+       or make it available to any third party, other than through the host
+       application's own install mechanism from an official DeepSweep listing;
+   (b) modify, adapt, translate or create derivative works of the plugin or of
+       any part of it;
+   (c) extract, reuse or reimplement its review engine, rules, rule text or
+       scoring in any other software;
+   (d) remove or alter any copyright, trademark or other proprietary notice;
+   (e) use the plugin, or any knowledge obtained from reading its source, to
+       build or improve a competing product.
+
+3. RESERVATION OF RIGHTS
+
+   All rights not expressly granted in Section 1 are reserved by DeepSweep AI.
+   No rights are granted by implication, estoppel or otherwise.
+
+4. THIRD-PARTY MATERIAL
+
+   Third-party trademarks are displayed on a nominative-fair-use basis solely
+   to identify compatibility. Any third-party components keep their own
+   licences.
+
+5. NO WARRANTY
+
+   THE PLUGIN IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+   FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+
+6. LIMITATION OF LIABILITY
+
+   IN NO EVENT SHALL DEEPSWEEP AI BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+   LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+   FROM, OUT OF OR IN CONNECTION WITH THE PLUGIN OR THE USE OR OTHER DEALINGS
+   IN THE PLUGIN.
+
+Contact: legal@deepsweep.ai
