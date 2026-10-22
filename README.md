@@ -32,6 +32,34 @@ In Claude Code:
 - Or ask in your own words: "is my Claude Code setup safe?", "can my agent push
   without asking?", "is this MCP server pinned?", "did I leave a key in
   CLAUDE.md?". Claude runs the same review and answers from its findings.
+- `/deepsweep:bulletins` shows DeepSweep's current security bulletins: severity,
+  summary, the fix and a link for each, then the status of each published
+  commitment. One public page. It reads the feed at
+  https://deepsweep.ai/advisories/v1/feed.json, at most once an hour in a
+  session. If the feed cannot be read, it shows the copy bundled with the plugin
+  and says newer bulletins may exist. It runs only when you type it.
+
+### Review one supported project file
+
+Ask, for example, “Review only .mcp.json and return JSON”, “Review
+.claude/settings.json as a public summary”, or “Check AGENTS.md for written
+credentials and return SARIF”. The local tool can select one of the same nine
+project files listed below. It derives the kind from the filename and reads
+only that file. It cannot select another root, arbitrary documents or home
+settings. No shell command is needed.
+
+This selected-file review accepts a deliberately narrower set of configuration
+fields than the project overview. Unknown fields, malformed input, invalid UTF-8,
+files over 256 KiB, and symlinks below the project root produce an unassessed error.
+A valid configuration for your editor can still be unsupported by this review;
+unsupported does not mean safe or insecure. Reports over 1 MiB are refused.
+
+Choose Markdown (the default), JSON, SARIF or a public summary. The first two and
+the public summary omit filenames, server names and raw configuration. The public
+summary also omits detailed findings and source lines. SARIF includes the selected
+project-relative filename and finding lines. None is a safety certificate.
+Instruction files are checked for known credential patterns only, not prompt
+injection. Review a report before sharing it; the plugin never uploads it for you.
 
 Claude offers to make a fix and changes nothing until you say yes.
 
@@ -88,7 +116,7 @@ The server reports what files configure, not effective access or a security cert
 
 ## Privacy
 
-- **Network**: none. The review makes no network calls. The MCP connection is local standard input/output; the final package is checked for outbound network APIs.
+- **Network**: the review makes no network calls. The MCP connection is local standard input/output. The plugin makes one request, and only when you run `/deepsweep:bulletins`. It reads https://deepsweep.ai/advisories/v1/feed.json, a public page. It sends no project, file or account details and follows no redirect. The final package is checked to contain that request and no other outbound network API.
 - **Writes**: none. The review only reads the files listed below.
 - **Credential values**: read only to recognise their kind, then dropped. The
   report and the JSON output hold the file, line, key name and kind (for

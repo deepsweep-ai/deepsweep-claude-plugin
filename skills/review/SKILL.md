@@ -4,12 +4,14 @@ description: Review what the Claude Code settings, MCP configs and agent instruc
 argument-hint: "[all]"
 disable-model-invocation: true
 
-allowed-tools: mcp__plugin_deepsweep_deepsweep__review_agent_configuration
+allowed-tools: mcp__plugin_deepsweep_deepsweep__review_agent_configuration, mcp__plugin_deepsweep_deepsweep__review_project_artifact
 ---
 
 # DeepSweep project configuration review
 
-Call `mcp__plugin_deepsweep_deepsweep__review_agent_configuration` to review the project Claude Code has open. Set `all` to true only when the user requests all findings. The tool reviews project files only; it does not inspect user-level settings.
+When the user requests just one supported project file or a JSON, Markdown, SARIF or public summary of that file, call `mcp__plugin_deepsweep_deepsweep__review_project_artifact` with its exact `file` enum and requested `format` (default Markdown). The file must be one of the tool's nine listed project files; do not inspect other files or choose a substitute. Kind is inferred by the server. This narrower review refuses unsupported fields and files over 256 KiB; an unassessed error is not a clean review. Instruction files get credential-pattern checks only, never a prompt-injection verdict. Return the selected report faithfully; do not augment a public summary with detailed findings. SARIF intentionally includes the selected relative filename. Sharing or uploading a report is a separate user action.
+
+Otherwise, call `mcp__plugin_deepsweep_deepsweep__review_agent_configuration` for a project overview. Set `all` to true only when the user requests all findings. This tool reviews project files only; it does not inspect user-level settings. Do not call the overview tool for a single-file request.
 
 If the tool is unavailable or returns an error, say no review ran. Do not run shell commands, inspect files yourself as a substitute, or invent findings. Claude chat cannot run this local server.
 

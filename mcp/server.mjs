@@ -5128,7 +5128,7 @@ var recursive = /* @__PURE__ */ new WeakMap();
 var NONE = 0;
 var ASSUMED = 1;
 var PROVEN = 2;
-function isRecursive(inst, stack, resolve3) {
+function isRecursive(inst, stack, resolve4) {
   const cached2 = recursive.get(inst);
   if (cached2 !== void 0)
     return cached2 ? PROVEN : NONE;
@@ -5138,7 +5138,7 @@ function isRecursive(inst, stack, resolve3) {
   let result = NONE;
   const check2 = (child) => {
     if (result !== PROVEN && child?._zod) {
-      const answer = isRecursive(child, stack, resolve3);
+      const answer = isRecursive(child, stack, resolve4);
       if (answer > result)
         result = answer;
     }
@@ -5149,7 +5149,7 @@ function isRecursive(inst, stack, resolve3) {
       const desc = Object.getOwnPropertyDescriptor(sh, key);
       if (spread && !desc.enumerable)
         continue;
-      const child = desc.get ? ASSUMED : desc.value?._zod ? isRecursive(desc.value, stack, resolve3) : NONE;
+      const child = desc.get ? ASSUMED : desc.value?._zod ? isRecursive(desc.value, stack, resolve4) : NONE;
       if (child > answer)
         answer = child;
     }
@@ -5213,7 +5213,7 @@ function isRecursive(inst, stack, resolve3) {
       break;
     // `$ZodLazy` caches its inner on the def, so a resolved edge is followed exactly
     case "lazy": {
-      const inner = def._cachedInner ?? (resolve3 ? inst._zod.innerType : void 0);
+      const inner = def._cachedInner ?? (resolve4 ? inst._zod.innerType : void 0);
       merge2(inner ? isRecursive(inner, stack, false) : ASSUMED);
       break;
     }
@@ -16623,8 +16623,8 @@ var tupleProcessor = (schema, ctx, _json, params) => {
   let minItems = def.items.length;
   while (minItems > 0) {
     const item = def.items[minItems - 1];
-    const optional2 = ctx.io === "input" ? inputOptin(item) !== void 0 : item._zod.optout === "optional";
-    if (!optional2)
+    const optional3 = ctx.io === "input" ? inputOptin(item) !== void 0 : item._zod.optout === "optional";
+    if (!optional3)
       break;
     minItems--;
   }
@@ -24085,14 +24085,14 @@ function inputRequiredRoundsExceededMessage(method, maxRounds) {
   return `Multi-round-trip request '${method}' still required input after ${maxRounds} rounds (inputRequired.maxRounds)`;
 }
 function sleep(ms, signal) {
-  return new Promise((resolve3, reject) => {
+  return new Promise((resolve4, reject) => {
     if (signal?.aborted) {
       reject(signal.reason instanceof SdkError ? signal.reason : new SdkError(SdkErrorCode.RequestTimeout, String(signal.reason)));
       return;
     }
     const timer = setTimeout(() => {
       signal?.removeEventListener("abort", onAbort);
-      resolve3();
+      resolve4();
     }, ms);
     const onAbort = () => {
       clearTimeout(timer);
@@ -24888,7 +24888,7 @@ var Protocol = class {
     const flowStartedAt = Date.now();
     let onAbort;
     let cleanupMessageId;
-    return new Promise((resolve3, reject) => {
+    return new Promise((resolve4, reject) => {
       const earlyReject = (error62) => {
         reject(error62);
       };
@@ -24957,7 +24957,7 @@ var Protocol = class {
         }
         if (decoded.kind === "invalid") return reject(decoded.error);
         if (decoded.kind === "input_required") {
-          if (options?.allowInputRequired === true) return resolve3(manualInputRequiredValue(decoded));
+          if (options?.allowInputRequired === true) return resolve4(manualInputRequiredValue(decoded));
           const flow = {
             codec: codec2,
             request,
@@ -24969,11 +24969,11 @@ var Protocol = class {
               params
             }, resultSchema, legOptions)
           };
-          return resolve3(this._resolveNonCompleteResult(decoded, flow));
+          return resolve4(this._resolveNonCompleteResult(decoded, flow));
         }
         const result = decoded.result;
         validateStandardSchema(resultSchema, result).then((parseResult) => {
-          if (parseResult.success) resolve3(parseResult.data);
+          if (parseResult.success) resolve4(parseResult.data);
           else reject(new SdkError(SdkErrorCode.InvalidResult, `Invalid result for ${request.method}: ${parseResult.error}`));
         }, reject);
       });
@@ -25178,9 +25178,9 @@ var require_content_type = /* @__PURE__ */ __commonJSMin(((exports) => {
   var QESC_REGEXP = /\\([\u000b\u0020-\u00ff])/g;
   var TYPE_REGEXP = /^[!#$%&'*+.^_`|~0-9A-Za-z-]+\/[!#$%&'*+.^_`|~0-9A-Za-z-]+$/;
   exports.parse = parse3;
-  function parse3(string4) {
-    if (!string4) throw new TypeError("argument string is required");
-    var header = typeof string4 === "object" ? getcontenttype(string4) : string4;
+  function parse3(string5) {
+    if (!string5) throw new TypeError("argument string is required");
+    var header = typeof string5 === "object" ? getcontenttype(string5) : string5;
     if (typeof header !== "string") throw new TypeError("argument string is required to be a string");
     var index = header.indexOf(";");
     var type = index !== -1 ? header.slice(0, index).trim() : header.trim();
@@ -25702,9 +25702,9 @@ var require_codegen = /* @__PURE__ */ __commonJSMin(((exports) => {
       const rhs = this.rhs === void 0 ? "" : ` = ${this.rhs}`;
       return `${varKind} ${this.name}${rhs};` + _n;
     }
-    optimizeNames(names, constants2) {
+    optimizeNames(names, constants3) {
       if (!names[this.name.str]) return;
-      if (this.rhs) this.rhs = optimizeExpr(this.rhs, names, constants2);
+      if (this.rhs) this.rhs = optimizeExpr(this.rhs, names, constants3);
       return this;
     }
     get names() {
@@ -25721,9 +25721,9 @@ var require_codegen = /* @__PURE__ */ __commonJSMin(((exports) => {
     render({ _n }) {
       return `${this.lhs} = ${this.rhs};` + _n;
     }
-    optimizeNames(names, constants2) {
+    optimizeNames(names, constants3) {
       if (this.lhs instanceof code_1.Name && !names[this.lhs.str] && !this.sideEffects) return;
-      this.rhs = optimizeExpr(this.rhs, names, constants2);
+      this.rhs = optimizeExpr(this.rhs, names, constants3);
       return this;
     }
     get names() {
@@ -25782,8 +25782,8 @@ var require_codegen = /* @__PURE__ */ __commonJSMin(((exports) => {
     optimizeNodes() {
       return `${this.code}` ? this : void 0;
     }
-    optimizeNames(names, constants2) {
-      this.code = optimizeExpr(this.code, names, constants2);
+    optimizeNames(names, constants3) {
+      this.code = optimizeExpr(this.code, names, constants3);
       return this;
     }
     get names() {
@@ -25809,12 +25809,12 @@ var require_codegen = /* @__PURE__ */ __commonJSMin(((exports) => {
       }
       return nodes.length > 0 ? this : void 0;
     }
-    optimizeNames(names, constants2) {
+    optimizeNames(names, constants3) {
       const { nodes } = this;
       let i = nodes.length;
       while (i--) {
         const n = nodes[i];
-        if (n.optimizeNames(names, constants2)) continue;
+        if (n.optimizeNames(names, constants3)) continue;
         subtractNames(names, n.names);
         nodes.splice(i, 1);
       }
@@ -25861,11 +25861,11 @@ var require_codegen = /* @__PURE__ */ __commonJSMin(((exports) => {
       if (cond === false || !this.nodes.length) return void 0;
       return this;
     }
-    optimizeNames(names, constants2) {
+    optimizeNames(names, constants3) {
       var _a3;
-      this.else = (_a3 = this.else) === null || _a3 === void 0 ? void 0 : _a3.optimizeNames(names, constants2);
-      if (!(super.optimizeNames(names, constants2) || this.else)) return;
-      this.condition = optimizeExpr(this.condition, names, constants2);
+      this.else = (_a3 = this.else) === null || _a3 === void 0 ? void 0 : _a3.optimizeNames(names, constants3);
+      if (!(super.optimizeNames(names, constants3) || this.else)) return;
+      this.condition = optimizeExpr(this.condition, names, constants3);
       return this;
     }
     get names() {
@@ -25887,9 +25887,9 @@ var require_codegen = /* @__PURE__ */ __commonJSMin(((exports) => {
     render(opts) {
       return `for(${this.iteration})` + super.render(opts);
     }
-    optimizeNames(names, constants2) {
-      if (!super.optimizeNames(names, constants2)) return;
-      this.iteration = optimizeExpr(this.iteration, names, constants2);
+    optimizeNames(names, constants3) {
+      if (!super.optimizeNames(names, constants3)) return;
+      this.iteration = optimizeExpr(this.iteration, names, constants3);
       return this;
     }
     get names() {
@@ -25924,9 +25924,9 @@ var require_codegen = /* @__PURE__ */ __commonJSMin(((exports) => {
     render(opts) {
       return `for(${this.varKind} ${this.name} ${this.loop} ${this.iterable})` + super.render(opts);
     }
-    optimizeNames(names, constants2) {
-      if (!super.optimizeNames(names, constants2)) return;
-      this.iterable = optimizeExpr(this.iterable, names, constants2);
+    optimizeNames(names, constants3) {
+      if (!super.optimizeNames(names, constants3)) return;
+      this.iterable = optimizeExpr(this.iterable, names, constants3);
       return this;
     }
     get names() {
@@ -25965,11 +25965,11 @@ var require_codegen = /* @__PURE__ */ __commonJSMin(((exports) => {
       (_b = this.finally) === null || _b === void 0 || _b.optimizeNodes();
       return this;
     }
-    optimizeNames(names, constants2) {
+    optimizeNames(names, constants3) {
       var _a3, _b;
-      super.optimizeNames(names, constants2);
-      (_a3 = this.catch) === null || _a3 === void 0 || _a3.optimizeNames(names, constants2);
-      (_b = this.finally) === null || _b === void 0 || _b.optimizeNames(names, constants2);
+      super.optimizeNames(names, constants3);
+      (_a3 = this.catch) === null || _a3 === void 0 || _a3.optimizeNames(names, constants3);
+      (_b = this.finally) === null || _b === void 0 || _b.optimizeNames(names, constants3);
       return this;
     }
     get names() {
@@ -26218,7 +26218,7 @@ var require_codegen = /* @__PURE__ */ __commonJSMin(((exports) => {
   function addExprNames(names, from) {
     return from instanceof code_1._CodeOrName ? addNames(names, from.names) : names;
   }
-  function optimizeExpr(expr, names, constants2) {
+  function optimizeExpr(expr, names, constants3) {
     if (expr instanceof code_1.Name) return replaceName(expr);
     if (!canOptimize(expr)) return expr;
     return new code_1._Code(expr._items.reduce((items, c) => {
@@ -26228,13 +26228,13 @@ var require_codegen = /* @__PURE__ */ __commonJSMin(((exports) => {
       return items;
     }, []));
     function replaceName(n) {
-      const c = constants2[n.str];
+      const c = constants3[n.str];
       if (c === void 0 || names[n.str] !== 1) return n;
       delete names[n.str];
       return c;
     }
     function canOptimize(e) {
-      return e instanceof code_1._Code && e._items.some((c) => c instanceof code_1.Name && names[c.str] === 1 && constants2[c.str] !== void 0);
+      return e instanceof code_1._Code && e._items.some((c) => c instanceof code_1.Name && names[c.str] === 1 && constants3[c.str] !== void 0);
     }
   }
   function subtractNames(names, from) {
@@ -27894,7 +27894,7 @@ var require_compile = /* @__PURE__ */ __commonJSMin(((exports) => {
     ref = (0, resolve_1.resolveUrl)(this.opts.uriResolver, baseId, ref);
     const schOrFunc = root.refs[ref];
     if (schOrFunc) return schOrFunc;
-    let _sch = resolve3.call(this, root, ref);
+    let _sch = resolve4.call(this, root, ref);
     if (_sch === void 0) {
       const schema = (_a3 = root.localRefs) === null || _a3 === void 0 ? void 0 : _a3[ref];
       const { schemaId } = this.opts;
@@ -27920,7 +27920,7 @@ var require_compile = /* @__PURE__ */ __commonJSMin(((exports) => {
   function sameSchemaEnv(s1, s2) {
     return s1.schema === s2.schema && s1.root === s2.root && s1.baseId === s2.baseId;
   }
-  function resolve3(root, ref) {
+  function resolve4(root, ref) {
     let sch;
     while (typeof (sch = this.refs[ref]) == "string") ref = sch;
     return sch || this.schemas[ref] || resolveSchema.call(this, root, ref);
@@ -28370,47 +28370,47 @@ var require_fast_uri = /* @__PURE__ */ __commonJSMin(((exports, module) => {
     else if (typeof uri === "object") uri = parse3(serialize(uri, options), options);
     return uri;
   }
-  function resolve3(baseURI, relativeURI, options) {
+  function resolve4(baseURI, relativeURI, options) {
     const schemelessOptions = options ? Object.assign({ scheme: "null" }, options) : { scheme: "null" };
     const resolved = resolveComponent(parse3(baseURI, schemelessOptions), parse3(relativeURI, schemelessOptions), schemelessOptions, true);
     schemelessOptions.skipEscape = true;
     return serialize(resolved, schemelessOptions);
   }
-  function resolveComponent(base, relative2, options, skipNormalization) {
+  function resolveComponent(base, relative3, options, skipNormalization) {
     const target = {};
     if (!skipNormalization) {
       base = parse3(serialize(base, options), options);
-      relative2 = parse3(serialize(relative2, options), options);
+      relative3 = parse3(serialize(relative3, options), options);
     }
     options = options || {};
-    if (!options.tolerant && relative2.scheme) {
-      target.scheme = relative2.scheme;
-      target.userinfo = relative2.userinfo;
-      target.host = relative2.host;
-      target.port = relative2.port;
-      target.path = removeDotSegments(relative2.path || "");
-      target.query = relative2.query;
+    if (!options.tolerant && relative3.scheme) {
+      target.scheme = relative3.scheme;
+      target.userinfo = relative3.userinfo;
+      target.host = relative3.host;
+      target.port = relative3.port;
+      target.path = removeDotSegments(relative3.path || "");
+      target.query = relative3.query;
     } else {
-      if (relative2.userinfo !== void 0 || relative2.host !== void 0 || relative2.port !== void 0) {
-        target.userinfo = relative2.userinfo;
-        target.host = relative2.host;
-        target.port = relative2.port;
-        target.path = removeDotSegments(relative2.path || "");
-        target.query = relative2.query;
+      if (relative3.userinfo !== void 0 || relative3.host !== void 0 || relative3.port !== void 0) {
+        target.userinfo = relative3.userinfo;
+        target.host = relative3.host;
+        target.port = relative3.port;
+        target.path = removeDotSegments(relative3.path || "");
+        target.query = relative3.query;
       } else {
-        if (!relative2.path) {
+        if (!relative3.path) {
           target.path = base.path;
-          if (relative2.query !== void 0) target.query = relative2.query;
+          if (relative3.query !== void 0) target.query = relative3.query;
           else target.query = base.query;
         } else {
-          if (relative2.path[0] === "/") target.path = removeDotSegments(relative2.path);
+          if (relative3.path[0] === "/") target.path = removeDotSegments(relative3.path);
           else {
-            if ((base.userinfo !== void 0 || base.host !== void 0 || base.port !== void 0) && !base.path) target.path = "/" + relative2.path;
-            else if (!base.path) target.path = relative2.path;
-            else target.path = base.path.slice(0, base.path.lastIndexOf("/") + 1) + relative2.path;
+            if ((base.userinfo !== void 0 || base.host !== void 0 || base.port !== void 0) && !base.path) target.path = "/" + relative3.path;
+            else if (!base.path) target.path = relative3.path;
+            else target.path = base.path.slice(0, base.path.lastIndexOf("/") + 1) + relative3.path;
             target.path = removeDotSegments(target.path);
           }
-          target.query = relative2.query;
+          target.query = relative3.query;
         }
         target.userinfo = base.userinfo;
         target.host = base.host;
@@ -28418,7 +28418,7 @@ var require_fast_uri = /* @__PURE__ */ __commonJSMin(((exports, module) => {
       }
       target.scheme = base.scheme;
     }
-    target.fragment = relative2.fragment;
+    target.fragment = relative3.fragment;
     return target;
   }
   function equal(uriA, uriB, options) {
@@ -28544,7 +28544,7 @@ var require_fast_uri = /* @__PURE__ */ __commonJSMin(((exports, module) => {
   const fastUri = {
     SCHEMES,
     normalize,
-    resolve: resolve3,
+    resolve: resolve4,
     resolveComponent,
     equal,
     serialize,
@@ -32048,8 +32048,8 @@ var require_formats = /* @__PURE__ */ __commonJSMin(((exports) => {
     if (!matches) return false;
     const year = +matches[1];
     const month = +matches[2];
-    const day = +matches[3];
-    return month >= 1 && month <= 12 && day >= 1 && day <= (month === 2 && isLeapYear(year) ? 29 : DAYS[month]);
+    const day2 = +matches[3];
+    return month >= 1 && month <= 12 && day2 >= 1 && day2 <= (month === 2 && isLeapYear(year) ? 29 : DAYS[month]);
   }
   function compareDate(d1, d2) {
     if (!(d1 && d2)) return void 0;
@@ -33819,7 +33819,7 @@ var StdioServerTransport = class {
   }
   send(message) {
     if (this._closed) return Promise.reject(/* @__PURE__ */ new Error("StdioServerTransport is closed"));
-    return new Promise((resolve3, reject) => {
+    return new Promise((resolve4, reject) => {
       const json2 = serializeMessage(message);
       let settled = false;
       const onError = (error62) => {
@@ -33834,22 +33834,22 @@ var StdioServerTransport = class {
         settled = true;
         this._stdout.off("error", onError);
         this._stdout.off("drain", onDrain);
-        resolve3();
+        resolve4();
       };
       this._stdout.once("error", onError);
       if (this._stdout.write(json2)) {
         if (settled) return;
         settled = true;
         this._stdout.off("error", onError);
-        resolve3();
+        resolve4();
       } else if (!settled) this._stdout.once("drain", onDrain);
     });
   }
 };
 
 // mcp/server.mjs
-import { realpathSync as realpathSync2, statSync, lstatSync, openSync as openSync2, fstatSync as fstatSync2, readSync as readSync2, closeSync as closeSync2, constants } from "node:fs";
-import { resolve as resolve2, relative, isAbsolute, sep } from "node:path";
+import { realpathSync as realpathSync3, statSync, lstatSync as lstatSync2, openSync as openSync3, fstatSync as fstatSync3, readSync as readSync3, closeSync as closeSync3, constants as constants2 } from "node:fs";
+import { resolve as resolve3, relative as relative2, isAbsolute as isAbsolute2, sep as sep2 } from "node:path";
 
 // scripts/lib/run.mjs
 import { closeSync, fstatSync, openSync, readSync, realpathSync } from "node:fs";
@@ -34653,12 +34653,12 @@ function safeText(text) {
   let t = text.replace(ANY_URL, (u) => minimiseUrl(u.replace(/[.,;:]+$/, "")));
   t = t.replace(AUTH_SCHEME, (_m, scheme) => `${scheme} \u2026`);
   t = t.replace(BARE_USERINFO, (_m, lead) => `${lead}\u2026@`);
-  t = t.replace(CREDENTIAL_FLAG, (m, lead, flag, sep2, value) => isReference(value) ? m : `${lead}${flag}${sep2}\u2026`);
+  t = t.replace(CREDENTIAL_FLAG, (m, lead, flag, sep3, value) => isReference(value) ? m : `${lead}${flag}${sep3}\u2026`);
   t = t.replace(ATTACHED_P, (m, lead, value) => /^[\d.:]+(?:\/(?:tcp|udp))?$/.test(value) || isReference(value) ? m : `${lead}-p\u2026`);
-  t = t.replace(SECRET_ASSIGNMENT, (m, lead, name, sep2, value) => {
+  t = t.replace(SECRET_ASSIGNMENT, (m, lead, name, sep3, value) => {
     const bare = name.replace(/^-+/, "");
     const secretName = isSecretName(bare) || CREDENTIAL_WORD.test(bare);
-    return secretName && !isReference(value) && !isPlaceholder(value) ? `${lead}${name}${sep2}\u2026` : m;
+    return secretName && !isReference(value) && !isPlaceholder(value) ? `${lead}${name}${sep3}\u2026` : m;
   });
   t = t.replace(TOKEN_RUN, (run) => valueShapeKind(run) || isKeyLikeSegment(run) ? "\u2026" : run);
   return t;
@@ -35509,6 +35509,317 @@ function runReview(opts) {
   };
 }
 
+// scripts/lib/artifact-read.mjs
+import { closeSync as closeSync2, constants, fstatSync as fstatSync2, lstatSync, openSync as openSync2, readSync as readSync2, realpathSync as realpathSync2 } from "node:fs";
+import { dirname, isAbsolute, relative, resolve as resolve2, sep } from "node:path";
+
+// scripts/lib/artifact.mjs
+import { homedir } from "node:os";
+var MAX_ARTIFACT_BYTES = 256 * 1024;
+var KINDS = /* @__PURE__ */ new Set(["mcp", "claude-settings", "instructions"]);
+var FORMATS = /* @__PURE__ */ new Set(["json", "markdown", "sarif", "public"]);
+var REPORTS = /* @__PURE__ */ new WeakMap();
+var SEVERITIES = ["critical", "high", "medium", "info"];
+var MESSAGES = Object.freeze({
+  "claude-bypass-permissions": "This project file configures bypassPermissions. Recent Claude Code versions may ignore this project default; effective access is unknown.",
+  "claude-any-shell": "This file contains an unrestricted shell allow rule not overridden by an ask or deny rule in the same file.",
+  "claude-sensitive-command": "This file permits a sensitive command without asking under the rules checked in this file.",
+  "claude-broad-directory": "This file adds a broad directory scope.",
+  "claude-all-project-servers": "This file approves all project MCP servers.",
+  "claude-auto-allow-hook": "This file contains a hook configured to return an allow decision.",
+  "mcp-unpinned-package": "A configured package runner uses a floating package specification.",
+  "mcp-unpinned-image": "A configured container runner uses an image without a version tag or digest.",
+  "mcp-remote-no-sign-in": "A remote MCP server has no sign-in configured in the fields checked in this file.",
+  "mcp-filesystem-broad": "A recognized filesystem server is configured with a broad directory argument.",
+  "config-secret": "A credential-like literal occurs in the configuration.",
+  "instructions-secret": "A known credential pattern occurs in the instruction text."
+});
+var LIMITATIONS = Object.freeze([
+  "Configured checks only; effective runtime access is unknown.",
+  "No package execution, URL requests, model calls, credential verification or configuration changes.",
+  "No prompt-injection verdict, tool capability inference, cross-tool reachability or security score.",
+  "No finding is not proof of safety. Credential discovery is pattern-based and may miss secrets."
+]);
+function freeze(value) {
+  for (const item of Object.values(value)) {
+    if (item && typeof item === "object") freeze(item);
+  }
+  return Object.freeze(value);
+}
+function sourceUriValid(uri) {
+  return typeof uri === "string" && uri.length > 0 && uri.length <= 1024 && /^[A-Za-z0-9._~/-]+$/.test(uri) && !uri.startsWith("/") && safeText(uri) === uri && uri.split("/").every((part) => part !== "" && part !== "." && part !== ".." && part.length <= 255 && !credentialSubstring(part));
+}
+function credentialSubstring(part) {
+  for (let start = 0; start < part.length; start++) {
+    for (let end = part.length; end > start; end--) {
+      if (valueShapeKind(part.slice(start, end))) return true;
+    }
+  }
+  return false;
+}
+function supplementConfigSecrets(tree, sourceLine, ctx, raw) {
+  const seen = new Set(raw.filter((f) => f.rule === "config-secret").map((f) => sourceLine(f.offset)));
+  const check2 = (value, offset) => {
+    if (!findInstructionSecrets(value, ctx).length) return;
+    const line = sourceLine(offset);
+    if (!seen.has(line)) {
+      raw.push({ rule: "config-secret", severity: "critical", line });
+      seen.add(line);
+    }
+  };
+  const walk = (node2) => {
+    if (node2.kind === "string") check2(node2.value, node2.offset);
+    else if (node2.kind === "array") node2.items.forEach(walk);
+    else if (node2.kind === "object") node2.members.forEach((m) => {
+      check2(m.key, m.keyOffset);
+      walk(m.value);
+    });
+  };
+  walk(tree);
+}
+function sourceLineLookup(text) {
+  const starts = [0];
+  for (let i = 0; i < text.length; i++) if (text[i] === "\n") starts.push(i + 1);
+  return (offset) => {
+    let lo = 0, hi = starts.length;
+    while (lo < hi) {
+      const mid = lo + hi >>> 1;
+      if (starts[mid] <= offset) lo = mid + 1;
+      else hi = mid;
+    }
+    return Math.max(1, lo);
+  };
+}
+function report(status, kind, code, findings = [], components = 0, sourceUri) {
+  const counts = Object.fromEntries(SEVERITIES.map((s) => [s, findings.filter((f) => f.severity === s).length]));
+  const result = freeze({
+    schemaVersion: 1,
+    status,
+    code,
+    kind: KINDS.has(kind) ? kind : "unknown",
+    coverage: { assessed: status === "success", components, checks: status !== "success" ? [] : kind === "instructions" ? ["instruction-secret-patterns"] : kind === "mcp" ? ["mcp-configuration-rules", "configuration-secret-patterns"] : ["claude-project-settings-rules", "configuration-secret-patterns"] },
+    access: { basis: "configured", effective: "unknown" },
+    counts,
+    findings,
+    limitations: [...LIMITATIONS]
+  });
+  REPORTS.set(result, { sourceUri });
+  return result;
+}
+function artifactError(code = "READ_ERROR") {
+  const allowed = /* @__PURE__ */ new Set(["READ_ERROR", "INVALID_UTF8", "PAYLOAD_TOO_LARGE", "PATH_OUTSIDE_ROOT", "SYMLINK_REFUSED", "NOT_REGULAR_FILE", "USAGE_ERROR"]);
+  return report("error", "unknown", allowed.has(code) ? code : "READ_ERROR");
+}
+function hasDuplicatesOrOversizedStrings(node2) {
+  if (node2.kind === "string") return node2.value.length > 4096;
+  if (node2.kind === "array") return node2.items.some(hasDuplicatesOrOversizedStrings);
+  if (node2.kind !== "object") return false;
+  const keys = /* @__PURE__ */ new Set();
+  return node2.members.some((m) => {
+    if (keys.has(m.key) || m.key.length > 4096) return true;
+    keys.add(m.key);
+    return hasDuplicatesOrOversizedStrings(m.value);
+  });
+}
+var only = (node2, names) => node2.members.every((m) => names.includes(m.key));
+var string4 = (node2) => node2?.kind === "string";
+var strings = (node2) => node2?.kind === "array" && node2.items.every(string4);
+var stringMap = (node2) => node2?.kind === "object" && node2.members.every((m) => string4(m.value));
+var optional2 = (node2, key, predicate) => !memberOf(node2, key) || predicate(memberOf(node2, key));
+function validateMcp(root) {
+  if (!only(root, [...MCP_SERVER_KEYS, "$schema"])) return { status: "unsupported", code: "UNSUPPORTED_SCHEMA" };
+  if (!optional2(root, "$schema", string4)) return { status: "error", code: "INVALID_SHAPE" };
+  const maps2 = MCP_SERVER_KEYS.map((key) => memberOf(root, key)).filter(Boolean);
+  if (maps2.length !== 1) return { status: "unsupported", code: "UNSUPPORTED_SCHEMA" };
+  const servers = maps2[0];
+  if (servers.kind !== "object") return { status: "error", code: "INVALID_SHAPE" };
+  if (!servers.members.length) return { status: "unsupported", code: "NO_COMPONENTS" };
+  const stringFields = ["command", "url", "httpUrl", "serverUrl", "type", "transport", "bearer_token", "bearer_token_env_var", "authProviderType"];
+  const mapFields = ["env", "headers", "http_headers", "env_http_headers"];
+  for (const { value: def } of servers.members) {
+    if (def.kind !== "object") return { status: "error", code: "INVALID_SHAPE" };
+    if (!only(def, [...stringFields, ...mapFields, "args"])) return { status: "unsupported", code: "UNSUPPORTED_SERVER_FIELDS" };
+    if (!stringFields.every((f) => optional2(def, f, string4)) || !mapFields.every((f) => optional2(def, f, stringMap)) || !optional2(def, "args", strings)) return { status: "error", code: "INVALID_SHAPE" };
+    const commands = ["command", "url", "httpUrl", "serverUrl"].map((f) => memberOf(def, f)).filter(Boolean);
+    if (commands.length !== 1 || !commands[0].value.trim()) return { status: "unsupported", code: "AMBIGUOUS_TRANSPORT" };
+    const declaredTypes = ["type", "transport"].map((key) => memberOf(def, key)?.value).filter((v) => v !== void 0);
+    const allowedTypes = memberOf(def, "command") ? ["stdio"] : ["http", "sse", "streamable-http", "websocket"];
+    if (declaredTypes.some((v) => !allowedTypes.includes(v)) || new Set(declaredTypes).size > 1) return { status: "unsupported", code: "AMBIGUOUS_TRANSPORT" };
+    if (!memberOf(def, "command") && memberOf(def, "args")) return { status: "error", code: "INVALID_SHAPE" };
+    for (const key of ["url", "httpUrl", "serverUrl"]) {
+      const url2 = memberOf(def, key);
+      if (url2) {
+        try {
+          const protocol = new URL(url2.value).protocol;
+          if (!["https:", "http:", "ws:", "wss:"].includes(protocol)) throw new Error();
+          if (declaredTypes.some((v) => v === "websocket" !== ["ws:", "wss:"].includes(protocol))) throw new Error();
+        } catch {
+          return { status: "unsupported", code: "UNSUPPORTED_URL" };
+        }
+      }
+    }
+  }
+  return { components: servers.members.length };
+}
+function validateSettings(root) {
+  if (!only(root, ["$schema", "permissions", "enableAllProjectMcpServers", "hooks", "env"])) return { status: "unsupported", code: "UNSUPPORTED_SETTINGS_FIELDS" };
+  if (!optional2(root, "$schema", string4)) return { status: "error", code: "INVALID_SHAPE" };
+  if (!optional2(root, "env", stringMap) || !optional2(root, "enableAllProjectMcpServers", (n) => n.kind === "boolean")) return { status: "error", code: "INVALID_SHAPE" };
+  const perms = memberOf(root, "permissions");
+  if (perms) {
+    if (perms.kind !== "object") return { status: "error", code: "INVALID_SHAPE" };
+    if (!only(perms, ["allow", "deny", "ask", "defaultMode", "additionalDirectories"])) return { status: "unsupported", code: "UNSUPPORTED_SETTINGS_FIELDS" };
+    if (!["allow", "deny", "ask", "additionalDirectories"].every((f) => optional2(perms, f, strings)) || !optional2(perms, "defaultMode", string4)) return { status: "error", code: "INVALID_SHAPE" };
+  }
+  const hooks = memberOf(root, "hooks");
+  if (hooks) {
+    if (hooks.kind !== "object") return { status: "error", code: "INVALID_SHAPE" };
+    if (!only(hooks, ["PreToolUse"])) return { status: "unsupported", code: "UNSUPPORTED_HOOKS" };
+    const pre = memberOf(hooks, "PreToolUse");
+    if (pre && pre.kind !== "array") return { status: "error", code: "INVALID_SHAPE" };
+    for (const group of pre?.items ?? []) {
+      if (group.kind !== "object" || !optional2(group, "matcher", string4) || memberOf(group, "hooks")?.kind !== "array") return { status: "error", code: "INVALID_SHAPE" };
+      if (!only(group, ["matcher", "hooks"])) return { status: "unsupported", code: "UNSUPPORTED_HOOKS" };
+      for (const hook of memberOf(group, "hooks").items) {
+        if (hook.kind !== "object" || !string4(memberOf(hook, "command"))) return { status: "error", code: "INVALID_SHAPE" };
+        if (!only(hook, ["type", "command"]) || memberOf(hook, "type")?.value !== "command") return { status: "unsupported", code: "UNSUPPORTED_HOOKS" };
+      }
+    }
+  }
+  if (!root.members.some((m) => m.key !== "$schema")) return { status: "unsupported", code: "NO_COMPONENTS" };
+  return { components: 1 };
+}
+function analyzeArtifact(text, { kind = "mcp", sourceUri = "artifact.json", userRoot = homedir() } = {}) {
+  if (!KINDS.has(kind)) return report("unsupported", kind, "UNSUPPORTED_KIND");
+  if (!sourceUriValid(sourceUri)) return report("error", kind, "INVALID_SOURCE_URI");
+  if (typeof text !== "string" || !text.trim()) return report("error", kind, "EMPTY_INPUT");
+  if (Buffer.byteLength(text, "utf8") > MAX_ARTIFACT_BYTES) return report("error", kind, "PAYLOAD_TOO_LARGE");
+  const ctx = { location: "artifact", scope: "project", sweep: true, userRoot };
+  const sourceLine = sourceLineLookup(text);
+  let raw, components;
+  if (kind === "instructions") {
+    if (text.split("\n").some((line) => line.length > 2e4) || /\S{4097}/.test(text)) return report("unsupported", kind, "DETECTOR_INPUT_LIMIT");
+    raw = findInstructionSecrets(text, ctx);
+    components = 1;
+  } else {
+    const tree = parseJsonTree(text);
+    if (!tree || tree.kind !== "object") return report("error", kind, "INVALID_JSON");
+    if (hasDuplicatesOrOversizedStrings(tree)) return report("unsupported", kind, "AMBIGUOUS_OR_OVERSIZED_VALUE");
+    const shape = kind === "mcp" ? validateMcp(tree) : validateSettings(tree);
+    if (shape.status) return report(shape.status, kind, shape.code);
+    components = shape.components;
+    raw = [...kind === "mcp" ? mcpServerFindings(tree, ctx) : claudeSettingsFindings(tree, ctx), ...findConfigSecrets(tree, ctx)];
+    supplementConfigSecrets(tree, sourceLine, ctx, raw);
+  }
+  if (raw.some((f) => !Object.hasOwn(MESSAGES, f.rule) || !SEVERITIES.includes(f.severity))) return report("error", kind, "UNMAPPED_RULE");
+  const findings = raw.map((f) => ({
+    ruleId: f.rule,
+    severity: f.severity,
+    line: f.line ?? sourceLine(f.offset),
+    message: MESSAGES[f.rule],
+    recommendation: findingFix({ rule: f.rule })
+  })).sort((a, b) => SEVERITIES.indexOf(a.severity) - SEVERITIES.indexOf(b.severity) || a.line - b.line || a.ruleId.localeCompare(b.ruleId));
+  return report("success", kind, findings.length ? "FINDINGS" : "NO_FINDINGS_IN_CHECKS", findings, components, sourceUri);
+}
+function renderArtifact(result, format = "json") {
+  if (!REPORTS.has(result)) throw new TypeError("Unverified artifact result");
+  if (!FORMATS.has(format)) throw new TypeError("Unsupported output format");
+  if (format === "json") return JSON.stringify(result, null, 2);
+  if (format === "public") {
+    return JSON.stringify({
+      schemaVersion: 1,
+      status: result.status,
+      code: result.code,
+      kind: result.kind,
+      coverage: result.coverage,
+      counts: result.counts,
+      limitations: result.limitations
+    }, null, 2);
+  }
+  if (format === "sarif") {
+    const sourceUri = REPORTS.get(result).sourceUri;
+    return JSON.stringify({ version: "2.1.0", $schema: "https://json.schemastore.org/sarif-2.1.0.json", runs: [{
+      tool: { driver: { name: "DeepSweep artifact review", semanticVersion: "0.1.0", rules: Object.entries(MESSAGES).map(([id, text]) => ({ id, shortDescription: { text } })) } },
+      invocations: [{ executionSuccessful: result.status === "success", toolExecutionNotifications: [{ level: result.status === "success" ? "note" : "error", message: { text: `${result.code}. ${LIMITATIONS.join(" ")}` } }] }],
+      results: result.findings.map((f) => ({
+        ruleId: f.ruleId,
+        level: ["critical", "high"].includes(f.severity) ? "error" : f.severity === "medium" ? "warning" : "note",
+        message: { text: `${f.message} ${f.recommendation}` },
+        locations: [{ physicalLocation: { artifactLocation: { uri: sourceUri, uriBaseId: "%SRCROOT%" }, region: { startLine: f.line } } }]
+      }))
+    }] }, null, 2);
+  }
+  return [
+    "# DeepSweep configured artifact review",
+    "",
+    `Status: ${result.status} (${result.code}).`,
+    `Checks assessed: ${result.coverage.assessed ? result.coverage.checks.join(", ") : "none"}.`,
+    "",
+    ...result.findings.map((f) => `- ${f.severity.toUpperCase()} ${f.ruleId}, line ${f.line}: ${f.message} ${f.recommendation}`),
+    "",
+    ...result.limitations.map((s) => `- ${s}`)
+  ].join("\n");
+}
+
+// scripts/lib/artifact-read.mjs
+var contained = (rel) => rel !== "" && !isAbsolute(rel) && rel !== ".." && !rel.startsWith(`..${sep}`);
+function relativeArtifact(file2, requestedRoot, root) {
+  for (const base of [requestedRoot, root]) {
+    const rel = relative(base, file2);
+    if (contained(rel)) return rel;
+  }
+  const parents = [];
+  for (let parent = dirname(file2); ; parent = dirname(parent)) {
+    parents.push(parent);
+    if (parent === dirname(parent)) break;
+  }
+  for (const parent of parents.reverse()) {
+    if (realpathSync2(parent) === root) return relative(parent, file2);
+  }
+  return null;
+}
+function readArtifact(opts) {
+  let fd;
+  try {
+    const requestedRoot = resolve2(opts.root);
+    const root = realpathSync2(requestedRoot);
+    const rel = relativeArtifact(resolve2(opts.file), requestedRoot, root);
+    if (rel === null || !contained(rel)) return artifactError("PATH_OUTSIDE_ROOT");
+    const file2 = resolve2(root, rel);
+    let walked = root;
+    for (const part of rel.split(sep)) {
+      walked = resolve2(walked, part);
+      if (lstatSync(walked).isSymbolicLink()) return artifactError("SYMLINK_REFUSED");
+    }
+    const before = lstatSync(file2);
+    if (!before.isFile()) return artifactError("NOT_REGULAR_FILE");
+    if (before.size > MAX_ARTIFACT_BYTES) return artifactError("PAYLOAD_TOO_LARGE");
+    fd = openSync2(file2, constants.O_RDONLY | constants.O_NOFOLLOW | constants.O_NONBLOCK);
+    const st = fstatSync2(fd);
+    if (!st.isFile() || st.dev !== before.dev || st.ino !== before.ino) return artifactError("NOT_REGULAR_FILE");
+    if (st.size > MAX_ARTIFACT_BYTES) return artifactError("PAYLOAD_TOO_LARGE");
+    const buf = Buffer.alloc(MAX_ARTIFACT_BYTES + 1);
+    let bytes = 0;
+    while (bytes < buf.length) {
+      const n = readSync2(fd, buf, bytes, buf.length - bytes, bytes);
+      if (!n) break;
+      bytes += n;
+    }
+    if (bytes > MAX_ARTIFACT_BYTES) return artifactError("PAYLOAD_TOO_LARGE");
+    let text;
+    try {
+      text = new TextDecoder("utf-8", { fatal: true }).decode(buf.subarray(0, bytes));
+    } catch {
+      return artifactError("INVALID_UTF8");
+    }
+    return analyzeArtifact(text, { kind: opts.kind, sourceUri: opts.format === "sarif" ? rel.split(sep).join("/") : "artifact.json" });
+  } catch {
+    return artifactError("READ_ERROR");
+  } finally {
+    if (fd !== void 0) closeSync2(fd);
+  }
+}
+
 // scripts/lib/render.mjs
 var DEFAULT_LIMIT = 5;
 function where(f) {
@@ -35559,12 +35870,235 @@ function renderText(result, { limit = DEFAULT_LIMIT } = {}) {
   return lines.join("\n");
 }
 
+// advisories/feed.json
+var feed_default = {
+  $schema: "https://deepsweep.ai/advisories/v1/schema.json",
+  version: 1,
+  generated_at: "2026-10-22T12:00:00Z",
+  feed_url: "https://deepsweep.ai/advisories",
+  status_url: "https://deepsweep.ai/advisories/status",
+  entries: [
+    {
+      id: "2026-10-21-php2shell",
+      url: "https://deepsweep.ai/blog/php2shell-two-critical-php-flaws",
+      published_at: "2026-10-21T22:50:00Z",
+      updated_at: "2026-10-22T07:07:00Z",
+      last_checked_at: "2026-10-22T07:07:00Z",
+      severity: "critical",
+      title: "PHP2Shell: two critical PHP core RCEs, patch to 8.5.12 / 8.4.27 / 8.3.36 / 8.2.35",
+      summary: "CVE-2026-109618 and CVE-2026-109619, CVSS 9.2, unauthenticated remote code execution in PHP itself. Fixes released 21 Oct 2026; backports exist for 7.4, 8.0 and 8.1; PHP says there are no complete mitigations. Early attack attempts reported.",
+      actions: [
+        "Update PHP to 8.5.12, 8.4.27, 8.3.36 or 8.2.35",
+        "On older branches take your vendor's backport",
+        "Managed hosting: confirm the serving build with your provider"
+      ],
+      affected: [
+        {
+          ecosystem: "php",
+          package: "php",
+          kind: "runtime",
+          versions: [
+            {
+              branch: "8.5",
+              fixed: "8.5.12",
+              remedy: "upgrade"
+            },
+            {
+              branch: "8.4",
+              fixed: "8.4.27",
+              remedy: "upgrade"
+            },
+            {
+              branch: "8.3",
+              fixed: "8.3.36",
+              remedy: "upgrade"
+            },
+            {
+              branch: "8.2",
+              fixed: "8.2.35",
+              remedy: "upgrade"
+            },
+            {
+              branch: "8.1",
+              fixed: null,
+              remedy: "vendor_backport"
+            },
+            {
+              branch: "8.0",
+              fixed: null,
+              remedy: "vendor_backport"
+            },
+            {
+              branch: "7.4",
+              fixed: null,
+              remedy: "vendor_backport"
+            }
+          ]
+        }
+      ],
+      sources: [
+        {
+          label: "PHP security advisory",
+          url: "https://www.php.net/archive/2026.php",
+          primary: true,
+          fact_checked: true
+        },
+        {
+          label: "BleepingComputer",
+          url: "https://www.bleepingcomputer.com/news/security/php-ships-emergency-patches-for-critical-php2shell-flaws/",
+          primary: false,
+          fact_checked: true
+        },
+        {
+          label: "Help Net Security",
+          url: "https://www.helpnetsecurity.com/2026/10/21/php2shell-php-vulnerabilities-patched-cve-2026-109618-cve-2026-109619/",
+          primary: false,
+          fact_checked: true
+        }
+      ],
+      what_we_changed: {
+        status: "shipped",
+        rule_id: "DS-SC-002",
+        tracking_id: "advisory-check:2026-10-21-php2shell",
+        released_in: "2.0.55"
+      },
+      updates: [
+        {
+          at: "2026-10-22T07:07:00Z",
+          text: "DeepSweep now flags projects pinned to an unfixed PHP release. The check reads composer.json, .php-version, Dockerfile php images and GitHub Actions php-version values, and gives the fixed release for each branch. It ships in the VS Code extension, version 2.0.55."
+        }
+      ],
+      community_sourced: false,
+      contributors: []
+    }
+  ],
+  commitments: [
+    {
+      id: "fact-checked-updates",
+      label: "Fact-checked against primary sources. Updated as the event unfolds. Every change is dated.",
+      status: "met",
+      evidence_url: "https://deepsweep.ai/advisories",
+      met_since: "2026-10-21",
+      updated_at: "2026-10-21T22:50:00Z"
+    },
+    {
+      id: "product-checks",
+      label: "A DeepSweep check ships with each advisory where one applies.",
+      status: "met",
+      evidence_url: "https://open-vsx.org/extension/deepsweep-ai/deepsweep/2.0.55",
+      met_since: "2026-10-22",
+      updated_at: "2026-10-22T07:07:00Z"
+    },
+    {
+      id: "community",
+      label: "Anyone can report a security event or correct an entry, with its primary source.",
+      status: "met",
+      evidence_url: "https://deepsweep.ai/advisories/contribute",
+      met_since: "2026-10-22",
+      updated_at: "2026-10-22T12:00:00Z"
+    },
+    {
+      id: "api",
+      label: "An advisories API so checks update without a release.",
+      status: "in_progress",
+      evidence_url: null,
+      met_since: null,
+      updated_at: "2026-10-21T22:50:00Z"
+    }
+  ]
+};
+
+// scripts/lib/advisories.mjs
+var FEED_URL = "https://deepsweep.ai/advisories/v1/feed.json";
+var SNAPSHOT = feed_default;
+var HOUR_MS = 60 * 60 * 1e3;
+var TIMEOUT_MS = 5e3;
+var MAX_BYTES = 1024 * 1024;
+var LIST_LIMIT = 5;
+var SEVERITY = { critical: "CRITICAL", high: "HIGH", medium: "MEDIUM", low: "LOW" };
+var isText = (v) => typeof v === "string" && v.length > 0;
+var isHttps = (v) => isText(v) && v.startsWith("https://");
+function validEntry(e) {
+  return e && typeof e === "object" && isText(e.id) && isHttps(e.url) && isText(e.title) && isText(e.summary) && isText(e.published_at) && Array.isArray(e.actions) && e.actions.every((a) => typeof a === "string");
+}
+var validCommitment = (c) => c && typeof c === "object" && isText(c.id) && isText(c.label);
+function parseFeed({ status, contentType, body }) {
+  if (status !== 200) return { ok: false, reason: `status ${status}` };
+  if (!String(contentType ?? "").toLowerCase().includes("application/json")) return { ok: false, reason: "not JSON" };
+  if (typeof body !== "string" || body.length > MAX_BYTES) return { ok: false, reason: "too large" };
+  let doc;
+  try {
+    doc = JSON.parse(body);
+  } catch {
+    return { ok: false, reason: "does not parse" };
+  }
+  if (!doc || doc.version !== 1) return { ok: false, reason: "not version 1" };
+  if (!Array.isArray(doc.entries) || !doc.entries.every(validEntry)) return { ok: false, reason: "entries" };
+  if (!Array.isArray(doc.commitments) || !doc.commitments.every(validCommitment)) return { ok: false, reason: "commitments" };
+  return { ok: true, doc };
+}
+function bulletinSource({ now = Date.now } = {}) {
+  let good = { doc: SNAPSHOT, source: "bundled", etag: null };
+  let lastAttempt = null;
+  return {
+    async read() {
+      if (lastAttempt !== null && now() - lastAttempt < HOUR_MS) return good;
+      lastAttempt = now();
+      try {
+        const headers = good.etag ? { "if-none-match": good.etag } : {};
+        const res = await fetch(FEED_URL, { headers, redirect: "error", signal: AbortSignal.timeout(TIMEOUT_MS) });
+        if (res.status === 304 && good.source === "live") return good;
+        const parsed = parseFeed({ status: res.status, contentType: res.headers.get("content-type"), body: await res.text() });
+        if (parsed.ok) good = { doc: parsed.doc, source: "live", etag: res.headers.get("etag") };
+      } catch {
+      }
+      return good;
+    }
+  };
+}
+var day = (iso) => isText(iso) ? iso.slice(0, 10) : null;
+function commitmentStatus(c) {
+  if (c.status === "met") return day(c.met_since) ? `Met since ${day(c.met_since)}.` : "Met.";
+  if (c.status === "in_progress") return "In progress.";
+  if (c.status === "planned") return "Planned.";
+  return null;
+}
+function renderBulletins({ doc, source }) {
+  const entries = [...doc.entries].sort((a, b) => String(b.published_at).localeCompare(String(a.published_at)));
+  const shown = entries.slice(0, LIST_LIMIT);
+  const lines = ["DeepSweep security bulletins", ""];
+  lines.push(source === "live" ? `From the live feed at ${FEED_URL}, last changed ${day(doc.generated_at) ?? "on an unknown date"}.` : `The live feed at ${FEED_URL} could not be read, so this is the copy bundled with this plugin, last changed ${day(doc.generated_at) ?? "on an unknown date"}. Newer bulletins may exist.`);
+  lines.push("");
+  if (shown.length === 0) lines.push("No bulletins are listed.");
+  shown.forEach((e, i) => {
+    const severity = SEVERITY[e.severity];
+    lines.push(`${i + 1}. ${severity ? `${severity}  ` : ""}${e.title}`);
+    lines.push(`   ${e.summary}`);
+    if (e.actions.length === 1) lines.push(`   Fix: ${e.actions[0]}`);
+    if (e.actions.length > 1) lines.push("   Fix:", ...e.actions.map((a) => `   - ${a}`));
+    lines.push(`   Details: ${e.url}`);
+    lines.push("");
+  });
+  if (entries.length > shown.length) lines.push(`${entries.length - shown.length} more at ${doc.feed_url ?? "https://deepsweep.ai/advisories"}`, "");
+  if (doc.commitments.length > 0) {
+    lines.push("What DeepSweep commits to");
+    for (const c of doc.commitments) {
+      const status = commitmentStatus(c);
+      lines.push(`- ${c.label}${status ? ` ${status}` : ""}`);
+    }
+    lines.push("");
+  }
+  if (isHttps(doc.feed_url)) lines.push(`All bulletins: ${doc.feed_url}`);
+  if (isHttps(doc.status_url)) lines.push(`Commitment status: ${doc.status_url}`);
+  return lines.join("\n").trimEnd();
+}
+
 // mcp/server.mjs
 var configuredRoot = process.env.CLAUDE_PROJECT_DIR;
 var allowedFiles = /* @__PURE__ */ new Set([...PROJECT_SETTINGS, ...PROJECT_MCP, ...PROJECT_INSTRUCTIONS]);
 function projectRoot() {
-  if (!configuredRoot || !isAbsolute(configuredRoot)) throw new Error("Open a project in Claude Code: the host did not supply an absolute project directory. Nothing was reviewed.");
-  const root = realpathSync2(configuredRoot);
+  if (!configuredRoot || !isAbsolute2(configuredRoot)) throw new Error("Open a project in Claude Code: the host did not supply an absolute project directory. Nothing was reviewed.");
+  const root = realpathSync3(configuredRoot);
   if (!statSync(root).isDirectory()) throw new Error("The host project directory is unavailable. Nothing was reviewed.");
   return root;
 }
@@ -35572,36 +36106,36 @@ function boundedReader(root) {
   return (abs, maxBytes) => {
     let fd;
     try {
-      const rel = relative(root, abs).split(sep).join("/");
+      const rel = relative2(root, abs).split(sep2).join("/");
       if (!allowedFiles.has(rel)) return { status: "unreadable" };
-      const target = realpathSync2(abs);
-      const inside = relative(root, target);
-      if (inside === ".." || inside.startsWith(".." + sep) || isAbsolute(inside)) return { status: "unreadable" };
-      const expected = lstatSync(target);
+      const target = realpathSync3(abs);
+      const inside = relative2(root, target);
+      if (inside === ".." || inside.startsWith(".." + sep2) || isAbsolute2(inside)) return { status: "unreadable" };
+      const expected = lstatSync2(target);
       if (!expected.isFile()) return { status: "absent" };
-      fd = openSync2(target, constants.O_RDONLY | constants.O_NOFOLLOW);
-      const actual = fstatSync2(fd);
-      if (realpathSync2(abs) !== target) return { status: "unreadable" };
+      fd = openSync3(target, constants2.O_RDONLY | constants2.O_NOFOLLOW);
+      const actual = fstatSync3(fd);
+      if (realpathSync3(abs) !== target) return { status: "unreadable" };
       if (!actual.isFile() || actual.dev !== expected.dev || actual.ino !== expected.ino) return { status: "unreadable" };
       if (actual.size > maxBytes) return { status: "too-large" };
       const bytes = Buffer.alloc(actual.size);
       let offset = 0;
       while (offset < bytes.length) {
-        const count = readSync2(fd, bytes, offset, bytes.length - offset, offset);
+        const count = readSync3(fd, bytes, offset, bytes.length - offset, offset);
         if (!count) break;
         offset += count;
       }
-      const after = lstatSync(target);
-      if (realpathSync2(abs) !== target || after.dev !== actual.dev || after.ino !== actual.ino) return { status: "unreadable" };
+      const after = lstatSync2(target);
+      if (realpathSync3(abs) !== target || after.dev !== actual.dev || after.ino !== actual.ino) return { status: "unreadable" };
       return { status: "ok", text: bytes.subarray(0, offset).toString("utf8") };
     } catch (err) {
       return { status: ["ENOENT", "ENOTDIR"].includes(err.code) ? "absent" : "unreadable" };
     } finally {
-      if (fd !== void 0) closeSync2(fd);
+      if (fd !== void 0) closeSync3(fd);
     }
   };
 }
-var server2 = new McpServer({ name: "deepsweep", version: "0.3.0" });
+var server2 = new McpServer({ name: "deepsweep", version: "0.5.0" });
 server2.registerTool("review_agent_configuration", {
   title: "Review project agent configuration",
   description: "Read the fixed agent settings, MCP configurations and instruction files in the Claude Code host project. Returns configured findings with file and line, never credential values. Does not inspect user-level files or make changes.",
@@ -35615,5 +36149,42 @@ server2.registerTool("review_agent_configuration", {
   } catch {
     return { isError: true, content: [{ type: "text", text: "DeepSweep review NOT RUN: open an accessible project in Claude Code so the host supplies its project directory. Nothing was reviewed." }] };
   }
+});
+var artifactKinds = new Map([
+  ...PROJECT_SETTINGS.map((file2) => [file2, "claude-settings"]),
+  ...PROJECT_MCP.map((file2) => [file2, "mcp"]),
+  ...PROJECT_INSTRUCTIONS.map((file2) => [file2, "instructions"])
+]);
+var artifactFiles = [...artifactKinds.keys()];
+server2.registerTool("review_project_artifact", {
+  title: "Review one project agent file",
+  description: "Only when the user requests a review of one of the nine supported project agent files, check that file with bounded configuration or credential-pattern rules. Choose JSON, Markdown, SARIF or a minimized public summary. Instruction files are checked for known credentials only, not prompt injection. Unsupported fields or unreadable files are unassessed errors. Never use for arbitrary documents, home settings or file discovery. No changes or network calls.",
+  inputSchema: external_exports.strictObject({
+    file: external_exports.enum(artifactFiles),
+    format: external_exports.enum(["json", "markdown", "sarif", "public"]).optional()
+  }, { error: () => "Invalid tool arguments." }),
+  annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false }
+}, ({ file: file2, format = "markdown" }) => {
+  try {
+    const root = projectRoot();
+    const result = readArtifact({ file: resolve3(root, file2), root, kind: artifactKinds.get(file2), format });
+    const text = renderArtifact(result, format);
+    if (Buffer.byteLength(text, "utf8") > 1024 * 1024) {
+      return { isError: true, content: [{ type: "text", text: "DeepSweep review incomplete: report exceeds the 1 MiB output limit. No report was returned." }] };
+    }
+    return { isError: result.status !== "success", content: [{ type: "text", text }] };
+  } catch {
+    return { isError: true, content: [{ type: "text", text: "DeepSweep review NOT RUN: open an accessible project in Claude Code so the host supplies its project directory. Nothing was reviewed." }] };
+  }
+});
+var bulletins = bulletinSource();
+server2.registerTool("security_bulletins", {
+  title: "Show DeepSweep security bulletins",
+  description: "Only when the user asks for DeepSweep security bulletins. Reads the public feed at https://deepsweep.ai/advisories/v1/feed.json at most once an hour, or shows the copy bundled with the plugin when the feed cannot be read. Sends nothing about the project or the user. No changes.",
+  inputSchema: external_exports.strictObject({}, { error: () => "Invalid tool arguments." }),
+  annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: true }
+}, async () => {
+  const view = await bulletins.read();
+  return { content: [{ type: "text", text: renderBulletins(view) }] };
 });
 await server2.connect(new StdioServerTransport());
