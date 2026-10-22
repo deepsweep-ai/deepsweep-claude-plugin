@@ -37,7 +37,10 @@ In Claude Code:
   commitment. One public page. It reads the feed at
   https://deepsweep.ai/advisories/v1/feed.json, at most once an hour in a
   session. If the feed cannot be read, it shows the copy bundled with the plugin
-  and says newer bulletins may exist. It runs only when you type it.
+  and says newer bulletins may exist. It runs only when you type it. The
+  feed's text is shown as quoted lines, each one line and length-limited, and
+  links appear only when they point to deepsweep.ai. A bulletin that does not
+  match the published format is left out.
 
 ### Review one supported project file
 

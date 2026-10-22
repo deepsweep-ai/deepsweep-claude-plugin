@@ -1,7 +1,7 @@
 {
   "name": "deepsweep",
   "displayName": "DeepSweep",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "Review project agent permissions, MCP configurations and credentials written into agent files. Reads locally without changing files. Results appear in your Claude conversation.",
   "author": {
     "name": "DeepSweep",
